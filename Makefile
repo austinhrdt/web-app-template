@@ -131,3 +131,6 @@ up:
 
 down:
 	@docker-compose down
+
+containerize-frontend:
+	@docker build -f web/Dockerfile -t $(REGISTRY)/frontend:latest .

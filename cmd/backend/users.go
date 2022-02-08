@@ -1,7 +1,11 @@
 // users model for the users table, has a direct dependancy on database
 package main
 
-import "time"
+import (
+	"fmt"
+	"regexp"
+	"time"
+)
 
 // User data structure
 type User struct {
@@ -79,4 +83,23 @@ func (user User) Update() error {
 	}
 	_, err = stmt.Exec(user.FirstName, user.LastName, user.Email, user.CreatedAt, user.ID)
 	return err
+}
+
+// Validate will validate the user data
+// ? should we contrain length here?
+// Consider: https://github.com/go-playground/validator
+func (user User) Validate() error {
+	if user.FirstName == "" {
+		return fmt.Errorf("first_name is required")
+	}
+	if user.LastName == "" {
+		return fmt.Errorf("last_name is required")
+	}
+	if user.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+	if ok, _ := regexp.MatchString(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`, user.Email); !ok {
+		return fmt.Errorf("email is not valid")
+	}
+	return nil
 }
